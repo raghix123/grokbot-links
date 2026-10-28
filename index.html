@@ -3,8 +3,21 @@
 <body style="font-family:system-ui;background:#111;color:#eee;text-align:center;padding-top:20vh">
 <p id="m">Opening Grok Bot...</p><p><a id="a" style="color:#7af;font-size:1.2em" href="#">Tap here if it didn't open</a></p>
 <script>
-var t=new URLSearchParams(location.search).get("to0"";
-if(/^grokbot:\/\/app\/v1\/[a-z0-9\/?=&_.%-]*$/i.test(t)){document.getElementById("a").href=t;location.href=t;
-setTimeout(function(){window.close();document.getElementById("m").textContent="Opened in Grok Bot. You can close this tab.";},0);}
-else{document.getElementById("m").textContent="That isn't a Grok Bot link.";document.getElementById("a").remove();}
+var t = new URLSearchParams(location.search).get("to") || "";
+var m = document.getElementById("m"), a = document.getElementById("a"), done = false;
+function shut() {
+  if (done) return; done = true;
+  window.close();
+  m.textContent = "Opened in Grok Bot. You can close this tab.";
+}
+if (/^grokbot:\/\/app\/v1\/[a-z0-9\/?=&_.%-]*$/i.test(t)) {
+  a.href = t;
+  window.addEventListener("blur", shut);
+  document.addEventListener("visibilitychange", function () { if (document.hidden) shut(); });
+  location.href = t;
+  setTimeout(shut, 700);
+} else {
+  m.textContent = "That isn't a Grok Bot link.";
+  a.remove();
+}
 </script>
